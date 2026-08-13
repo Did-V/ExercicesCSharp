@@ -1,0 +1,15 @@
+D:\VS Code\ExercicesCSharp\bin\Debug\net10.0\ExercicesCSharp.exe
+D:\VS Code\ExercicesCSharp\bin\Debug\net10.0\ExercicesCSharp.deps.json
+D:\VS Code\ExercicesCSharp\bin\Debug\net10.0\ExercicesCSharp.runtimeconfig.json
+D:\VS Code\ExercicesCSharp\bin\Debug\net10.0\ExercicesCSharp.dll
+D:\VS Code\ExercicesCSharp\bin\Debug\net10.0\ExercicesCSharp.pdb
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.GeneratedMSBuildEditorConfig.editorconfig
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.AssemblyInfoInputs.cache
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.AssemblyInfo.cs
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.csproj.CoreCompileInputs.cache
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.sourcelink.json
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.dll
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\refint\ExercicesCSharp.dll
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.pdb
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ExercicesCSharp.genruntimeconfig.cache
+D:\VS Code\ExercicesCSharp\obj\Debug\net10.0\ref\ExercicesCSharp.dll
