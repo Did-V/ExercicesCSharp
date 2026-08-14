@@ -1,4 +1,6 @@
 ﻿using ExercicesCSharp.Models;
+using ExercicesCSharp.Data;
+using Microsoft.EntityFrameworkCore;
 
 //Exercice 1 : Variables et affichage
 string nom = "Jean";
@@ -52,7 +54,7 @@ Console.WriteLine("\nExercice 5 : Une classe simple avec validation");
 try
 {
     Client client = new("Jean", "jean@example.com");
-    Console.WriteLine($"Client créé : {client.Name}, {client.Email}, {client.DateInscription}");
+    Console.WriteLine($"Client créé : {client.Nom}, {client.Email}, {client.DateInscription.ToLocalTime()}");
 }
 catch (ArgumentException ex)
 {
@@ -62,7 +64,7 @@ catch (ArgumentException ex)
 try
 {
     Client clientSansEmail = new("Jean", "");
-    Console.WriteLine($"Client créé : {clientSansEmail.Name}, {clientSansEmail.Email}, {clientSansEmail.DateInscription}");
+    Console.WriteLine($"Client créé : {clientSansEmail.Nom}, {clientSansEmail.Email}, {clientSansEmail.DateInscription.ToLocalTime()}");
 }
 catch (ArgumentException ex)
 {
@@ -80,3 +82,94 @@ catch (ArgumentException ex)
 
 //Exercice 6 : Méthodes et comportements
 Console.WriteLine("\nExercice 6 : Méthodes et comportements");
+try
+{
+    Client NouveauClient = new("Marie", "marie@exemple.com");
+    Console.WriteLine($"Client créé : {NouveauClient.Nom}, {NouveauClient.Email}, {NouveauClient.DateInscription.ToLocalTime()}");
+    // Vérifier si le client est nouveau
+    if (Client.EstNouveauClient(NouveauClient.DateInscription))
+    {
+        Console.WriteLine($"{NouveauClient.Nom} est un nouveau client.");
+    }
+    else
+    {
+        Console.WriteLine($"{NouveauClient.Nom} est un ancien client.");
+    }
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Erreur lors de la création du client : {ex.Message}");
+}
+
+//Exercice 7 : Gestion d'erreurs
+Console.WriteLine("\nExercice 7 : Gestion d'erreurs");
+try
+{
+    int resultat1 = Client.DiviserNombre(10, 4);
+    Console.WriteLine($"Résultat de la division : {resultat1}");
+    int resultat2 = Client.DiviserNombre(10, 0);
+    Console.WriteLine($"Résultat de la division : {resultat2}");
+}
+catch (DivideByZeroException ex)
+{
+    Console.WriteLine($"Erreur lors de la division : {ex.Message}");
+}
+
+//Exercice 8 : Classes en relation
+Console.WriteLine("\nExercice 8 : Classes en relation");
+Produit produit1 = new("Ordinateur", 1200.00m, 5);
+Produit produit2 = new("Souris", 25.00m, 10);
+Produit produit3 = new("Clavier", 45.00m, 0); //Produit en rupture de stock
+Client clientCmd = new("Rachelle","rachelle@exemple.com");
+Panier monPanier = new(clientCmd);
+monPanier.AjouterProduit(produit1);
+monPanier.AjouterProduit(produit2,5);
+monPanier.AjouterProduit(produit3);
+monPanier.AfficherProduits();
+monPanier.CalculerTotal();
+
+//Exercice 9 : Combinaison complète
+Console.WriteLine("\nExercice 9 : Combinaison complète");
+//Créer 3 avis sur chaque produit
+Avis avis1Produit1 = new(produit1, 5, "Excellent PC. Très Puissant.");
+Avis avis2Produit1 = new(produit1, 3, "Problème avec le livreur. PC fonctionnel mais rayé sur le capot.");
+Avis avis3Produit1 = new(produit1, 1, "Nul : J'ai eu du mal à installer Windows.");
+Avis avis1Produit2 = new(produit2, 4, "La souris est bien dans l'ensemble.");
+Avis avis2Produit2 = new(produit2, 5, "Parfait. Exactement ce qu'il me fallait avec cette souris.");
+Avis avis3Produit2 = new(produit2, 3, "La souris fonctionne mais j'ai déconnexion de temps de temps.");
+Avis avis1Produit3 = new(produit3, 2, "Certaines touches ne fonctionne pas sur ce clavier");
+Avis avis2Produit3 = new(produit3, 1, "On m'a livré un clavier qui ne contient que les lettres A-Z-E-R-T-Y... Et pourtant c'est un clavier QWERTY. Mais c'est une blague ???");
+Avis avis3Produit3 = new(produit3, 1, "On m'a livré un clavier QWERTY. J'ai pourtant demandé un BEPO.");
+List<Avis> ListeAvis = [avis1Produit1,avis2Produit1,avis3Produit1,avis1Produit2,avis2Produit2,avis2Produit2,avis1Produit3,avis2Produit3,avis3Produit3];
+var NotesMoyennes = ListeAvis
+    .GroupBy(avis => new{avis.Produit.Id,avis.Produit.Nom}) //Remarque : Ne pas utiliser directement avis.Produit car C# risque de créer un groupe différent pour chaque avis afin de faire les comparaisons par adresses
+    //Remarque 2 : Utiliser l'objet avis.Produit ici regroupe tous l'objet Produit. On n'a besoin de regrouper que l'identifiant. Il faut ajouter aussi le nom afin que groupe puisse le récupérer.
+    .Select(groupe => new
+    {
+        NomProduit = groupe.Key.Nom,    //Remarque :  groupe.Key est un objet "Produit", donc on peut faire .Nom
+        NoteMoyenne = Math.Round(groupe.Average(avis => avis.Note), 2)
+    });
+Console.WriteLine("Note moyenne des produits : ");
+foreach(var LaNote in NotesMoyennes)
+{
+    Console.WriteLine($"- {LaNote.NomProduit} => {LaNote.NoteMoyenne}");
+}
+//Exercice 10 : Persistance en base
+Console.WriteLine("\nExercice 10 : Persistance en base");
+using var context = new AppDbContext(); //Création d'une instance du contexte de base de données pour interagir avec la base de données PostgreSQL
+//Créer 2 clients dans la base
+Client client1 = new("Jason","jasonvorhees@zombie.com");
+Client client2 = new("Freedy","freddykrueger@vaudou.com");
+context.CLIENTS.Add(client1);
+context.CLIENTS.Add(client2);
+context.SaveChanges();
+Console.WriteLine("Clients créés en base");
+//Créer un panier pour le 2e client
+Panier panierClient2 = new(client2);
+context.PANIERS.Add(panierClient2);
+context.SaveChanges();
+Console.WriteLine($"Panier du client {client2.Nom} créé en base");
+//Lire et afficher tous les panniers du client 2
+var panierEnBase = context.PANIERS
+    .Include(produit => produit.)
+
