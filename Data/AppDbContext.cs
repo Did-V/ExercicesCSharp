@@ -5,9 +5,9 @@ namespace ExercicesCSharp.Data;
 
 public class AppDbContext : DbContext
 {
-    public DbSet<Produit> PRODUITS { get; set; }
-    public DbSet<Panier> PANIERS { get; set; }
-    public DbSet<Client> CLIENTS { get; set; }
+    public DbSet<Produit> Produits { get; set; }
+    public DbSet<Commande> Commandes { get; set; }
+    public DbSet<Client> Clients { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

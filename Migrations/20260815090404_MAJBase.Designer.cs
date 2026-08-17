@@ -3,6 +3,7 @@ using System;
 using ExercicesCSharp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExercicesCSharp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260815090404_MAJBase")]
+    partial class MAJBase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +46,7 @@ namespace ExercicesCSharp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("CLIENTS");
                 });
 
             modelBuilder.Entity("ExercicesCSharp.Models.Commande", b =>
@@ -72,7 +75,7 @@ namespace ExercicesCSharp.Migrations
 
                     b.HasIndex("ProduitId");
 
-                    b.ToTable("Commande");
+                    b.ToTable("COMMANDE");
                 });
 
             modelBuilder.Entity("ExercicesCSharp.Models.Produit", b =>
@@ -95,7 +98,7 @@ namespace ExercicesCSharp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Produits");
+                    b.ToTable("PRODUITS");
                 });
 
             modelBuilder.Entity("ExercicesCSharp.Models.Commande", b =>

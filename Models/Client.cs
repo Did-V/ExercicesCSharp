@@ -16,7 +16,7 @@ namespace ExercicesCSharp.Models
             //Vérifier si l'e-mail contient un @ seulement s'il est renseigné
             if (!string.IsNullOrWhiteSpace(email) && !email.Contains('@'))
             {
-                throw new ArgumentException("L'e-mail doit contenir un '@'.", nameof(email));
+                throw new ArgumentException($"L'e-mail du client {nom} doit contenir un '@'.", nameof(email));
             }
             
             Nom = nom;

@@ -121,12 +121,41 @@ Produit produit1 = new("Ordinateur", 1200.00m, 5);
 Produit produit2 = new("Souris", 25.00m, 10);
 Produit produit3 = new("Clavier", 45.00m, 0); //Produit en rupture de stock
 Client clientCmd = new("Rachelle","rachelle@exemple.com");
-Panier monPanier = new(clientCmd);
-monPanier.AjouterProduit(produit1);
-monPanier.AjouterProduit(produit2,5);
-monPanier.AjouterProduit(produit3);
-monPanier.AfficherProduits();
-monPanier.CalculerTotal();
+try{    
+    LignePanier ligneDuPanier_Produit1 = new(produit1);
+    LignePanier ligneDuPanier_Produit2 = new(produit2,5);
+    Panier monPanier = new(clientCmd);
+    monPanier.AjouterLignePanier(ligneDuPanier_Produit1);
+    ligneDuPanier_Produit1.AfficherDetails();
+    monPanier.AjouterLignePanier(ligneDuPanier_Produit2);
+    try
+    {    
+        LignePanier ligneDuPanier_Produit3 = new(produit3);
+        monPanier.AjouterLignePanier(ligneDuPanier_Produit3);
+    }
+    catch(Exception ex)
+    {
+        Console.WriteLine($"Impossible de créer la ligne du panier avec {nameof(produit3)} : {ex.Message}");
+    }
+    monPanier.AfficherProduits();
+    monPanier.CalculerTotal();
+}
+catch (ArgumentNullException ex)
+{
+    Console.WriteLine($"Création du panier impossible : {ex.Message}");
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Création du panier impossible : {ex.Message}");
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine($"Création du panier impossible : {ex.Message}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Création du panier impossible : {ex.Message}");
+}
 
 //Exercice 9 : Combinaison complète
 Console.WriteLine("\nExercice 9 : Combinaison complète");
@@ -136,11 +165,11 @@ Avis avis2Produit1 = new(produit1, 3, "Problème avec le livreur. PC fonctionnel
 Avis avis3Produit1 = new(produit1, 1, "Nul : J'ai eu du mal à installer Windows.");
 Avis avis1Produit2 = new(produit2, 4, "La souris est bien dans l'ensemble.");
 Avis avis2Produit2 = new(produit2, 5, "Parfait. Exactement ce qu'il me fallait avec cette souris.");
-Avis avis3Produit2 = new(produit2, 3, "La souris fonctionne mais j'ai déconnexion de temps de temps.");
+Avis avis3Produit2 = new(produit2, 3, "La souris fonctionne mais j'ai des déconnexions de temps de temps.");
 Avis avis1Produit3 = new(produit3, 2, "Certaines touches ne fonctionne pas sur ce clavier");
 Avis avis2Produit3 = new(produit3, 1, "On m'a livré un clavier qui ne contient que les lettres A-Z-E-R-T-Y... Et pourtant c'est un clavier QWERTY. Mais c'est une blague ???");
 Avis avis3Produit3 = new(produit3, 1, "On m'a livré un clavier QWERTY. J'ai pourtant demandé un BEPO.");
-List<Avis> ListeAvis = [avis1Produit1,avis2Produit1,avis3Produit1,avis1Produit2,avis2Produit2,avis2Produit2,avis1Produit3,avis2Produit3,avis3Produit3];
+List<Avis> ListeAvis = [avis1Produit1,avis2Produit1,avis3Produit1,avis1Produit2,avis2Produit2,avis3Produit2,avis1Produit3,avis2Produit3,avis3Produit3];
 var NotesMoyennes = ListeAvis
     .GroupBy(avis => new{avis.Produit.Id,avis.Produit.Nom}) //Remarque : Ne pas utiliser directement avis.Produit car C# risque de créer un groupe différent pour chaque avis afin de faire les comparaisons par adresses
     //Remarque 2 : Utiliser l'objet avis.Produit ici regroupe tous l'objet Produit. On n'a besoin de regrouper que l'identifiant. Il faut ajouter aussi le nom afin que groupe puisse le récupérer.
@@ -154,22 +183,101 @@ foreach(var LaNote in NotesMoyennes)
 {
     Console.WriteLine($"- {LaNote.NomProduit} => {LaNote.NoteMoyenne}");
 }
+
 //Exercice 10 : Persistance en base
 Console.WriteLine("\nExercice 10 : Persistance en base");
+Client client1 = null!; //1er client
+Client client2 = null!; //2e client
+Produit produitMachette = null!;    //Un produit appelé machette
+Produit produitGriffe = null!;    //Un produit appelé griffe
+
 using var context = new AppDbContext(); //Création d'une instance du contexte de base de données pour interagir avec la base de données PostgreSQL
 //Créer 2 clients dans la base
-Client client1 = new("Jason","jasonvorhees@zombie.com");
-Client client2 = new("Freedy","freddykrueger@vaudou.com");
-context.CLIENTS.Add(client1);
-context.CLIENTS.Add(client2);
-context.SaveChanges();
-Console.WriteLine("Clients créés en base");
-//Créer un panier pour le 2e client
-Panier panierClient2 = new(client2);
-context.PANIERS.Add(panierClient2);
-context.SaveChanges();
-Console.WriteLine($"Panier du client {client2.Nom} créé en base");
-//Lire et afficher tous les panniers du client 2
-var panierEnBase = context.PANIERS
-    .Include(produit => produit.)
+try
+{
+    client1 = new("Jason","jasonvorhees@zombie.com");
+    client2 = new("Freddy","freddykrueger@vaudou.com");
+    if (!context.Clients.Any())
+    {    
+        context.Clients.Add(client1);
+        context.Clients.Add(client2);
+        context.SaveChanges();
+        Console.WriteLine("Clients créés en base");
+    }
+}
+catch(ArgumentException ex)
+{
+    Console.WriteLine($"Impossible de créer les clients : {ex.Message}");
+    return;
+}
+catch(Exception ex)
+{
+    Console.WriteLine($"Impossible de créer les clients : {ex.Message}");
+    return;
+}
+//Créer 2 produits
+try
+{    
+    produitMachette = new("Machette", 50.00m, 10);
+    produitGriffe = new("Griffe", 100.00m, 20);
+    if (!context.Produits.Any())
+    {    
+        context.Produits.Add(produitMachette);
+        context.Produits.Add(produitGriffe);
+        context.SaveChanges();
+    }
+}
+catch(ArgumentException ex)
+{
+    Console.WriteLine($"Impossible de créer les produits : {ex.Message}");
+    return;
+}
+catch(Exception ex)
+{
+    Console.WriteLine($"Impossible de créer les produits : {ex.Message}");
+    return;
+}
+//Créer une commande pour le 2e client
+Commande CmdClient2 = new(client2,produitGriffe,3);
+try
+{ 
+    if (!context.Commandes.Any())
+    {    
+        context.Commandes.Add(CmdClient2);
+        context.SaveChanges();
+        Console.WriteLine($"Commande du client {client2.Nom} créé en base");
+    }
+}
+catch(ArgumentNullException ex)
+{
+    Console.WriteLine($"Impossible de créer la commande : {ex.Message}");
+    return;
+}
+catch(ArgumentException ex)
+{
+    Console.WriteLine($"Impossible de créer la commande : {ex.Message}");
+    return;
+}
+catch(InvalidOperationException ex)
+{
+    Console.WriteLine($"Impossible de créer la commande : {ex.Message}");
+    return;
+}
+catch(Exception ex)
+{
+    Console.WriteLine($"Impossible de créer la commande : {ex.Message}");
+    return;
+}
+//Lire et afficher toutes les commandes du client 2
+var CmdCli2Base = context.Commandes
+    .Include(p => p.Produit)
+    .Where(p => p.Client.Id == client2.Id)
+    .ToList();
+Console.WriteLine($"Commandes du client {client2.Nom} : ");
+foreach(var UneCmd in CmdCli2Base)
+{
+    UneCmd.AfficherDetails();
+}
+
+
 
